@@ -1,4 +1,7 @@
-FreeEedUI
-=========
+FreeEed Search UI
+========
+Currently need apache-solr-4.0
 
-Review portion of FreeEed
+To build a war file:
+
+mvn war:war
