@@ -85,11 +85,14 @@ public class CaseFileService {
     }
     
     public File getNativeFile(String caseName, String documentOriginalPath) {
+        String fileName = documentOriginalPath.contains(File.separator) ?
+                documentOriginalPath.substring(documentOriginalPath.lastIndexOf(File.separator) + 1) : documentOriginalPath;
+                
         File dir = new File(FILES_DIR + File.separator + caseName + File.separator + "native");
         if (dir.exists()) {
             File[] files = dir.listFiles();
             for (File file : files) {
-                if (file.getName().endsWith(documentOriginalPath)) {
+                if (file.getName().endsWith(fileName)) {
                     return file;
                 }
             }
@@ -99,11 +102,14 @@ public class CaseFileService {
     }
     
     public File getImageFile(String caseName, String documentOriginalPath) {
+        String fileName = documentOriginalPath.contains(File.separator) ?
+                documentOriginalPath.substring(documentOriginalPath.lastIndexOf(File.separator) + 1) : documentOriginalPath;
+        
         File dir = new File(FILES_DIR + File.separator + caseName + File.separator + "pdf");
         if (dir.exists()) {
             File[] files = dir.listFiles();
             for (File file : files) {
-                if (file.getName().endsWith(documentOriginalPath + ".pdf")) {
+                if (file.getName().endsWith(fileName + ".pdf")) {
                     return file;
                 }
             }
