@@ -81,7 +81,7 @@ public class ResultHighlight {
      * @return
      */
     private String highlightResults(String result, String word, int index ) {        
-        return result.replaceAll(word, "<span class='" + createHightlightClass(index) + "'>" + word + "</span>");
+        return result.replaceAll("\\b" + word + "\\b", "<span class='" + createHightlightClass(index) + "'>" + word + "</span>");
     }
     
     private String createHightlightClass(int colorIndex) {
