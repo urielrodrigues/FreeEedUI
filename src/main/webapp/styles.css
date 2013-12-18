@@ -408,6 +408,7 @@ body {
 
 .result-list-id {
     width: 70px;
+    overflow: hidden;
 }
 
 .result-list-from {
