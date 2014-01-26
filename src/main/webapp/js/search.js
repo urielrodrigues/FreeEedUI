@@ -304,7 +304,7 @@ function addCaseTag(tag) {
 }
 
 function appendCaseTag(tag) {
-    $(".case-tags-box-body").append("<div class='case-tags-box-row' onclick='addTagToSearch(\"" + tag + "\")'>" + tag + "</div>");
+    $(".case-tags-box-body").append("<div id='" + tag + "' class='case-tags-box-row' onclick='addTagToSearch(\"" + tag + "\")'>" + tag + "</div>");
 }
 
 $(document).ready(function() {
@@ -326,4 +326,21 @@ $(document).ready(function() {
     for (var t in allTags) {
         appendCaseTag(t);
     }
+    
+    $("body").on("click", ".html-preview", function () {
+    	var docId = $(this).attr("data");
+    	
+    	$.ajax({
+	      type: 'GET',
+	      url: 'filedownload.html',
+	      data: { action: 'exportHtml', docPath : docId},
+	      success:function(data) {
+	        $("#html_preview_modal_content").html(data);
+	        $('#html_preview_modal').modal('show');
+	      },
+	      error:function(){
+	        alert("Technical error, try that again in a few moments!");
+	      }
+    	});
+    });
 });

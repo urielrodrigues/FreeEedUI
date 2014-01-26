@@ -65,6 +65,7 @@ public class CaseFileDownloadController extends SecureController {
         log.debug("Action called: " + action);
         
         File toDownload = null;
+        boolean htmlMode = false;
         
         if ("exportNative".equals(action)) {
             String docPath = (String) valueStack.get("docPath");
@@ -73,7 +74,14 @@ public class CaseFileDownloadController extends SecureController {
         } else if ("exportImage".equals(action)) {
             String docPath = (String) valueStack.get("docPath");
             toDownload = caseFileService.getImageFile(selectedCase.getName(), docPath);
-            
+        } else if ("exportHtml".equals(action)) {
+            String docPath = (String) valueStack.get("docPath");
+            toDownload = caseFileService.getHtmlFile(selectedCase.getName(), docPath);
+            htmlMode = true;
+        } else if ("exportHtmlImage".equals(action)) {
+            String docPath = (String) valueStack.get("docPath");
+            toDownload = caseFileService.getHtmlImageFile(selectedCase.getName(), docPath);
+            htmlMode = true;
         } else if ("exportNativeAll".equals(action)) {
             String query = solrSession.buildSearchQuery();
             int rows = solrSession.getTotalDocuments();
@@ -106,14 +114,19 @@ public class CaseFileDownloadController extends SecureController {
                 int length = 0;
                 ServletOutputStream outStream = response.getOutputStream();
                 String mimetype = "application/octet-stream";
+                if (htmlMode) {
+                    mimetype = "text/html";
+                }
     
                 response.setContentType(mimetype);
                 response.setContentLength((int) toDownload.length());
                 String fileName = toDownload.getName();
     
-                // sets HTTP header
-                response.setHeader("Content-Disposition", "attachment; filename=\""
-                        + fileName + "\"");
+                if (!htmlMode) {
+                    // sets HTTP header
+                    response.setHeader("Content-Disposition", "attachment; filename=\""
+                            + fileName + "\"");
+                }
     
                 byte[] byteBuffer = new byte[1024];
                 DataInputStream in = new DataInputStream(new FileInputStream(

@@ -56,6 +56,8 @@
                 <div class="operation-link">
                     <a class="operation-link-text" href="filedownload.html?action=exportNativeAll">Export as native</a>
                 </div>
+                <div class="tags-remove-box">
+                </div>
             </div>
             
             <div id="tag-all" class="tag-box">
@@ -128,6 +130,9 @@
             </div>
 
             <div class="operations-box">
+                <div class="operation-link">
+                    <a class="operation-link-text html-preview" data="${doc.documentPath}">Preview</a>
+                </div>
                 <div class="operation-link">
                     <a href="javascript:;" class="operation-link-text" onclick="$('#tag-doc-${doc.documentId}').slideToggle(500);">Tag</a>
                 </div>

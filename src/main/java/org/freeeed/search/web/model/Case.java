@@ -97,6 +97,12 @@ public class Case implements Serializable {
         tags.add(tag);
     }
     
+    public synchronized void removeTag(String tag) {
+        if (tags != null) {
+            tags.remove(tag);
+        }
+    }
+    
     public synchronized List<String> getTags() {
         List<String> result = new ArrayList<String>();
         if (tags != null) {

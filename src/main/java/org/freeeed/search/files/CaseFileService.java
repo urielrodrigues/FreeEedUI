@@ -103,6 +103,28 @@ public class CaseFileService {
         return null;
     }
     
+    public File getHtmlFile(String caseName, String documentOriginalPath) {
+        String fileName = documentOriginalPath.contains(File.separator) ?
+                documentOriginalPath.substring(documentOriginalPath.lastIndexOf(File.separator) + 1) : documentOriginalPath;
+        
+        File dir = new File(FILES_DIR + File.separator + caseName + File.separator + "html");
+        if (dir.exists()) {
+            File[] files = dir.listFiles();
+            for (File file : files) {
+                if (file.getName().endsWith(fileName + ".html")) {
+                    return file;
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    public File getHtmlImageFile(String caseName, String documentOriginalPath) {        
+        File file = new File(FILES_DIR + File.separator + caseName + File.separator + "html" + File.separator + documentOriginalPath);
+        return file;
+    }
+    
     public File getImageFile(String caseName, String documentOriginalPath) {
         String fileName = documentOriginalPath.contains(File.separator) ?
                 documentOriginalPath.substring(documentOriginalPath.lastIndexOf(File.separator) + 1) : documentOriginalPath;

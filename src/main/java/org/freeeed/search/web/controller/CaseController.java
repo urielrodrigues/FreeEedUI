@@ -99,7 +99,7 @@ public class CaseController extends SecureController {
             c.setId(id);
             
             String name = (String) valueStack.get("name");
-            if (name == null || !name.matches("[a-zA-Z0-9\\-_]+")) {
+            if (name == null || !name.matches("[a-zA-Z0-9\\-_ ]+")) {
                 errors.add("Name is missing or invalid");
             }
             
