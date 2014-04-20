@@ -67,46 +67,34 @@ public class CaseFileDownloadController extends SecureController {
         File toDownload = null;
         boolean htmlMode = false;
         
+        String docPath = (String) valueStack.get("docPath");
+        String uniqueId = (String) valueStack.get("uniqueId"); 
+        
         if ("exportNative".equals(action)) {
-            String docPath = (String) valueStack.get("docPath");
-            toDownload = caseFileService.getNativeFile(selectedCase.getName(), docPath);
+            toDownload = caseFileService.getNativeFile(selectedCase.getName(), docPath, uniqueId);
             
         } else if ("exportImage".equals(action)) {
-            String docPath = (String) valueStack.get("docPath");
-            toDownload = caseFileService.getImageFile(selectedCase.getName(), docPath);
+            toDownload = caseFileService.getImageFile(selectedCase.getName(), docPath, uniqueId);
         } else if ("exportHtml".equals(action)) {
-            String docPath = (String) valueStack.get("docPath");
-            toDownload = caseFileService.getHtmlFile(selectedCase.getName(), docPath);
+            toDownload = caseFileService.getHtmlFile(selectedCase.getName(), docPath, uniqueId);
             htmlMode = true;
         } else if ("exportHtmlImage".equals(action)) {
-            String docPath = (String) valueStack.get("docPath");
             toDownload = caseFileService.getHtmlImageFile(selectedCase.getName(), docPath);
             htmlMode = true;
         } else if ("exportNativeAll".equals(action)) {
             String query = solrSession.buildSearchQuery();
             int rows = solrSession.getTotalDocuments();
-            
-            List<String> docPaths = new ArrayList<String>();
-            
+                        
             List<SolrDocument> docs = getDocumentPaths(query, 0, rows);
-            for (SolrDocument solrDocument : docs) {
-                docPaths.add(solrDocument.getDocumentPath());
-            }
             
-            toDownload = caseFileService.getNativeFiles(selectedCase.getName(), docPaths);
+            toDownload = caseFileService.getNativeFiles(selectedCase.getName(), docs);
             
         } else if ("exportImageAll".equals(action)) {
             String query = solrSession.buildSearchQuery();
             int rows = solrSession.getTotalDocuments();
             
-            List<String> docPaths = new ArrayList<String>();
-            
             List<SolrDocument> docs = getDocumentPaths(query, 0, rows);
-            for (SolrDocument solrDocument : docs) {
-                docPaths.add(solrDocument.getDocumentPath());
-            }
-            
-            toDownload = caseFileService.getImageFiles(selectedCase.getName(), docPaths);
+            toDownload = caseFileService.getImageFiles(selectedCase.getName(), docs);
         }
         
         if (toDownload != null) {
@@ -151,7 +139,7 @@ public class CaseFileDownloadController extends SecureController {
     }
 
     private List<SolrDocument> getDocumentPaths(String query, int from, int rows) {
-        SolrResult solrResult = searchService.search(query, from, rows, null, false, "id,document_original_path");
+        SolrResult solrResult = searchService.search(query, from, rows, null, false, "id,document_original_path,unique_id");
         List<SolrDocument> result = new ArrayList<SolrDocument>(solrResult.getTotalSize());
         result.addAll(solrResult.getDocuments().values());
         return result;

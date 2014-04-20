@@ -329,11 +329,12 @@ $(document).ready(function() {
     
     $("body").on("click", ".html-preview", function () {
     	var docId = $(this).attr("data");
+    	var uId = $(this).attr("uid");
     	
     	$.ajax({
 	      type: 'GET',
 	      url: 'filedownload.html',
-	      data: { action: 'exportHtml', docPath : docId},
+	      data: { action: 'exportHtml', docPath : docId, uniqueId : uId},
 	      success:function(data) {
 	        $("#html_preview_modal_content").html(data);
 	        $('#html_preview_modal').modal('show');

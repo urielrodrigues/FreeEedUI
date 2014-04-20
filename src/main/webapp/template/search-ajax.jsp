@@ -131,16 +131,16 @@
 
             <div class="operations-box">
                 <div class="operation-link">
-                    <a class="operation-link-text html-preview" data="${doc.documentPath}">Preview</a>
+                    <a class="operation-link-text html-preview" data="${doc.documentPath}" uid="${doc.uniqueId}">Preview</a>
                 </div>
                 <div class="operation-link">
                     <a href="javascript:;" class="operation-link-text" onclick="$('#tag-doc-${doc.documentId}').slideToggle(500);">Tag</a>
                 </div>
                 <div class="operation-link">
-                    <a class="operation-link-text" href="filedownload.html?action=exportNative&docPath=${doc.documentPath}">Export native</a>
+                    <a class="operation-link-text" href="filedownload.html?action=exportNative&docPath=${doc.documentPath}&uniqueId=${doc.uniqueId}">Export native</a>
                 </div>
                 <div class="operation-link">
-                    <a class="operation-link-text" href="filedownload.html?action=exportImage&docPath=${doc.documentPath}">Export image</a>
+                    <a class="operation-link-text" href="filedownload.html?action=exportImage&docPath=${doc.documentPath}&uniqueId=${doc.uniqueId}">Export image</a>
                 </div>
             </div>
             <div id="tag-doc-${doc.documentId}" class="tag-box">
