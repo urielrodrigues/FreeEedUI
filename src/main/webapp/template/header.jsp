@@ -1,3 +1,3 @@
 <div class="header_text">
-    FreeEed Search - version: 4.0.2
+    FreeEed Search - version: 4.3.0
 </div>
