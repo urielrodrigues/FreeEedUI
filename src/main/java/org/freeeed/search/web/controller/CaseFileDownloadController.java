@@ -19,6 +19,8 @@ package org.freeeed.search.web.controller;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,6 +91,19 @@ public class CaseFileDownloadController extends SecureController {
             
             toDownload = caseFileService.getNativeFiles(selectedCase.getName(), docs);
             
+        } else if ("exportNativeAllFromSource".equals(action)) {
+            String query = solrSession.buildSearchQuery();
+            int rows = solrSession.getTotalDocuments();
+            
+            List<SolrDocument> docs = getDocumentPaths(query, 0, rows);
+            
+            String source = (String) valueStack.get("source");
+            try {
+                source = URLDecoder.decode(source, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+            }
+            
+            toDownload = caseFileService.getNativeFilesFromSource(source, docs);                
         } else if ("exportImageAll".equals(action)) {
             String query = solrSession.buildSearchQuery();
             int rows = solrSession.getTotalDocuments();

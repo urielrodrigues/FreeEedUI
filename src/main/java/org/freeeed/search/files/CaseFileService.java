@@ -106,6 +106,16 @@ public class CaseFileService {
         return null;
     }
     
+    public File getNativeFileFromSource(String source, String documentOriginalPath) {
+        String fileName = source + File.separator + documentOriginalPath;
+        File f = new File(fileName);
+        if (f.exists()) {
+            return f;
+        }
+        
+        return null;
+    }
+    
     public File getHtmlFile(String caseName, String documentOriginalPath, String uniqueId) {
         String fileName = documentOriginalPath.contains(File.separator) ?
                 documentOriginalPath.substring(documentOriginalPath.lastIndexOf(File.separator) + 1) : documentOriginalPath;
@@ -177,6 +187,30 @@ public class CaseFileService {
         List<File> imageFiles = new ArrayList<File>();
         for (SolrDocument doc : docs) {
             File file = getNativeFile(caseName, doc.getDocumentPath(), doc.getUniqueId());
+            if (file != null) {
+                imageFiles.add(file);
+            }
+        }
+        
+        File tmpDir = new File(FILES_TMP_DIR);
+        tmpDir.mkdirs();
+        
+        String zipFileName = FILES_TMP_DIR + File.separator + "nattmp" + System.currentTimeMillis() + ".zip"; 
+        try {
+            ZipUtil.createZipFile(zipFileName, imageFiles);
+        } catch (IOException e) {
+            log.error("Problem creating zip file", e);
+            return null;
+        }
+        
+        File res = new File(zipFileName);
+        return res;
+    }
+    
+    public File getNativeFilesFromSource(String source, List<SolrDocument> docs) {
+        List<File> imageFiles = new ArrayList<File>();
+        for (SolrDocument doc : docs) {
+            File file = getNativeFileFromSource(source, doc.getDocumentPath());
             if (file != null) {
                 imageFiles.add(file);
             }
