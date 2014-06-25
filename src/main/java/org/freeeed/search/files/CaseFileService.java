@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.freeeed.search.web.model.solr.SolrDocument;
 import org.springframework.web.multipart.MultipartFile;
@@ -106,11 +107,13 @@ public class CaseFileService {
         return null;
     }
     
-    public File getNativeFileFromSource(String source, String documentOriginalPath) {
+    public File getNativeFileFromSource(String location, String source, String documentOriginalPath) throws IOException {
         String fileName = source + File.separator + documentOriginalPath;
         File f = new File(fileName);
         if (f.exists()) {
-            return f;
+            File newFile = new File(location + File.separator + documentOriginalPath);
+            FileUtils.copyFile(f, newFile);
+            return newFile;
         }
         
         return null;
@@ -207,21 +210,23 @@ public class CaseFileService {
         return res;
     }
     
-    public File getNativeFilesFromSource(String source, List<SolrDocument> docs) {
-        List<File> imageFiles = new ArrayList<File>();
-        for (SolrDocument doc : docs) {
-            File file = getNativeFileFromSource(source, doc.getDocumentPath());
-            if (file != null) {
-                imageFiles.add(file);
-            }
-        }
-        
+    public File getNativeFilesFromSource(String source, List<SolrDocument> docs) throws IOException {
         File tmpDir = new File(FILES_TMP_DIR);
         tmpDir.mkdirs();
         
-        String zipFileName = FILES_TMP_DIR + File.separator + "nattmp" + System.currentTimeMillis() + ".zip"; 
+        long ts =  System.currentTimeMillis();
+        String zipFileName = FILES_TMP_DIR + File.separator + "nattmp" + ts + ".zip";
+        String zipFileDirName = FILES_TMP_DIR + File.separator + "nattmp" + ts;
+        File zipFileDir = new File(zipFileDirName);
+        
+        zipFileDir.mkdirs();
+        
+        for (SolrDocument doc : docs) {
+            getNativeFileFromSource(zipFileDirName, source, doc.getDocumentPath());
+        }
+
         try {
-            ZipUtil.createZipFile(zipFileName, imageFiles);
+            ZipUtil.createZipFile(zipFileName, zipFileDirName);
         } catch (IOException e) {
             log.error("Problem creating zip file", e);
             return null;
