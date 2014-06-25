@@ -48,7 +48,7 @@ public class ZipUtil {
         //create File object from source directory
         File fileSource = new File(directoryToZip);
        
-        addDirectory(zout, fileSource);
+        addDirectory(zout, fileSource, "");
        
         //close the ZipOutputStream
         zout.close();
@@ -69,29 +69,29 @@ public class ZipUtil {
         //create object of ZipOutputStream from FileOutputStream
         ZipOutputStream zout = new ZipOutputStream(fout);
               
-        addDirectory(zout, files);
+        addDirectory(zout, files, "");
        
         //close the ZipOutputStream
         zout.close();
     }
     
-    private static void addDirectory(ZipOutputStream zout, File fileSource) throws IOException {
+    private static void addDirectory(ZipOutputStream zout, File fileSource, String path) throws IOException {
         File[] files = fileSource.listFiles();
         Arrays.asList(files);
-        addDirectory(zout, Arrays.asList(files));
+        addDirectory(zout, Arrays.asList(files), path);
     }
     
-    private static void addDirectory(ZipOutputStream zout, List<File> files) throws IOException {
+    private static void addDirectory(ZipOutputStream zout, List<File> files, String path) throws IOException {
         for (int i = 0; i < files.size(); i++) {
             if (files.get(i).isDirectory()) {
-                addDirectory(zout, files.get(i));
+                addDirectory(zout, files.get(i), path + files.get(i).getName() + File.separator);
                 continue;
             }
 
             byte[] buffer = new byte[1024];
 
             FileInputStream fin = new FileInputStream(files.get(i));
-            zout.putNextEntry(new ZipEntry(files.get(i).getName()));
+            zout.putNextEntry(new ZipEntry(path + files.get(i).getName()));
 
             int length;
 
