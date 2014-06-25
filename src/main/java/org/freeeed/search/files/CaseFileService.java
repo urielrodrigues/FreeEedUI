@@ -114,6 +114,20 @@ public class CaseFileService {
             File newFile = new File(location + File.separator + documentOriginalPath);
             FileUtils.copyFile(f, newFile);
             return newFile;
+        } else {
+            int extIndex = documentOriginalPath.lastIndexOf(".");
+            if (extIndex != -1) {
+                String ext = documentOriginalPath.substring(documentOriginalPath.lastIndexOf(".") + 1);
+                if ("eml".equalsIgnoreCase(ext)) {
+                    fileName = source + File.separator + documentOriginalPath.substring(0, extIndex);
+                    f = new File(fileName);
+                    if (f.exists()) {
+                        File newFile = new File(location + File.separator + documentOriginalPath);
+                        FileUtils.copyFile(f, newFile);
+                        return newFile;
+                    }
+                }
+            }
         }
         
         return null;
