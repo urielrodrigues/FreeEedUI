@@ -45,7 +45,7 @@ public class TagQuerySearch implements QuerySearch {
 
     @Override
     public String getQuery() {
-        return "tags-search-field:" + tag;
+        return "tags-search-field:\"" + tag + "\"";
     }
 
     @Override
