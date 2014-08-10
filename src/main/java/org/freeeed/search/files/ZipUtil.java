@@ -13,7 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 package org.freeeed.search.files;
 
 import java.io.BufferedInputStream;
@@ -33,31 +33,31 @@ public class ZipUtil {
 
     /**
      * Create a zip file from the given directory to zip.
-     * 
-     * @param zipFile
+     *
+     * @param zipFileName
      * @param directoryToZip
      * @throws IOException
      */
     public static void createZipFile(String zipFileName, String directoryToZip) throws IOException {
         //create object of FileOutputStream
         FileOutputStream fout = new FileOutputStream(zipFileName);
-                 
+
         //create object of ZipOutputStream from FileOutputStream
         ZipOutputStream zout = new ZipOutputStream(fout);
-       
+
         //create File object from source directory
         File fileSource = new File(directoryToZip);
-       
+
         addDirectory(zout, fileSource, "");
-       
+
         //close the ZipOutputStream
         zout.close();
     }
-    
+
     /**
-     * 
+     *
      * Create a zip file containing the given files.
-     * 
+     *
      * @param zipFileName
      * @param files
      * @throws IOException
@@ -65,55 +65,50 @@ public class ZipUtil {
     public static void createZipFile(String zipFileName, List<File> files) throws IOException {
         //create object of FileOutputStream
         FileOutputStream fout = new FileOutputStream(zipFileName);
-                 
+
         //create object of ZipOutputStream from FileOutputStream
         ZipOutputStream zout = new ZipOutputStream(fout);
-              
+
         addDirectory(zout, files, "");
-       
+
         //close the ZipOutputStream
         zout.close();
     }
-    
+
     private static void addDirectory(ZipOutputStream zout, File fileSource, String path) throws IOException {
         File[] files = fileSource.listFiles();
         Arrays.asList(files);
         addDirectory(zout, Arrays.asList(files), path);
     }
-    
+
     private static void addDirectory(ZipOutputStream zout, List<File> files, String path) throws IOException {
-        for (int i = 0; i < files.size(); i++) {
-            if (files.get(i).isDirectory()) {
-                addDirectory(zout, files.get(i), path + files.get(i).getName() + File.separator);
+        for (File file : files) {
+            if (file.isDirectory()) {
+                addDirectory(zout, file, path + file.getName() + File.separator);
                 continue;
             }
-
             byte[] buffer = new byte[1024];
-
-            FileInputStream fin = new FileInputStream(files.get(i));
-            zout.putNextEntry(new ZipEntry(path + files.get(i).getName()));
-
+            FileInputStream fin = new FileInputStream(file);
+            zout.putNextEntry(new ZipEntry(path + file.getName()));
             int length;
-
             while ((length = fin.read(buffer)) > 0) {
                 zout.write(buffer, 0, length);
             }
-
             zout.closeEntry();
             fin.close();
         }
     }
-    
+
     /**
      * Unzip a given zip file to a specified output directory.
-     * 
+     *
      * @param zipFileName
      * @param outputDir
      * @throws IOException
      */
     public static void unzipFile(String zipFileName, String outputDir)
             throws IOException {
-        
+
         ZipFile zipFile = new ZipFile(new File(zipFileName));
         @SuppressWarnings("rawtypes")
         Enumeration e = zipFile.entries();
@@ -125,10 +120,8 @@ public class ZipUtil {
             // create directories if required.
             destinationFilePath.getParentFile().mkdirs();
 
-            // if the entry is directory, leave it. Otherwise extract it.
-            if (entry.isDirectory()) {
-                continue;
-            } else {
+            // if the entry is not a directory, extract it.
+            if (!entry.isDirectory()) {            
                 /*
                  * Get the InputStream for current entry of the zip file using
                  * 
