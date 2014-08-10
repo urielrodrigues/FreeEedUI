@@ -19,6 +19,8 @@ package org.freeeed.search.web.controller;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,46 +69,52 @@ public class CaseFileDownloadController extends SecureController {
         File toDownload = null;
         boolean htmlMode = false;
         
-        if ("exportNative".equals(action)) {
-            String docPath = (String) valueStack.get("docPath");
-            toDownload = caseFileService.getNativeFile(selectedCase.getName(), docPath);
-            
-        } else if ("exportImage".equals(action)) {
-            String docPath = (String) valueStack.get("docPath");
-            toDownload = caseFileService.getImageFile(selectedCase.getName(), docPath);
-        } else if ("exportHtml".equals(action)) {
-            String docPath = (String) valueStack.get("docPath");
-            toDownload = caseFileService.getHtmlFile(selectedCase.getName(), docPath);
-            htmlMode = true;
-        } else if ("exportHtmlImage".equals(action)) {
-            String docPath = (String) valueStack.get("docPath");
-            toDownload = caseFileService.getHtmlImageFile(selectedCase.getName(), docPath);
-            htmlMode = true;
-        } else if ("exportNativeAll".equals(action)) {
-            String query = solrSession.buildSearchQuery();
-            int rows = solrSession.getTotalDocuments();
-            
-            List<String> docPaths = new ArrayList<String>();
-            
-            List<SolrDocument> docs = getDocumentPaths(query, 0, rows);
-            for (SolrDocument solrDocument : docs) {
-                docPaths.add(solrDocument.getDocumentPath());
+        String docPath = (String) valueStack.get("docPath");
+        String uniqueId = (String) valueStack.get("uniqueId"); 
+        
+        try {
+            if ("exportNative".equals(action)) {
+                toDownload = caseFileService.getNativeFile(selectedCase.getName(), docPath, uniqueId);
+                
+            } else if ("exportImage".equals(action)) {
+                toDownload = caseFileService.getImageFile(selectedCase.getName(), docPath, uniqueId);
+            } else if ("exportHtml".equals(action)) {
+                toDownload = caseFileService.getHtmlFile(selectedCase.getName(), docPath, uniqueId);
+                htmlMode = true;
+            } else if ("exportHtmlImage".equals(action)) {
+                toDownload = caseFileService.getHtmlImageFile(selectedCase.getName(), docPath);
+                htmlMode = true;
+            } else if ("exportNativeAll".equals(action)) {
+                String query = solrSession.buildSearchQuery();
+                int rows = solrSession.getTotalDocuments();
+                            
+                List<SolrDocument> docs = getDocumentPaths(query, 0, rows);
+                
+                toDownload = caseFileService.getNativeFiles(selectedCase.getName(), docs);
+                
+            } else if ("exportNativeAllFromSource".equals(action)) {
+                String query = solrSession.buildSearchQuery();
+                int rows = solrSession.getTotalDocuments();
+                
+                List<SolrDocument> docs = getDocumentPaths(query, 0, rows);
+                
+                String source = (String) valueStack.get("source");
+                try {
+                    source = URLDecoder.decode(source, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                }
+                
+                toDownload = caseFileService.getNativeFilesFromSource(source, docs);                
+            } else if ("exportImageAll".equals(action)) {
+                String query = solrSession.buildSearchQuery();
+                int rows = solrSession.getTotalDocuments();
+                
+                List<SolrDocument> docs = getDocumentPaths(query, 0, rows);
+                toDownload = caseFileService.getImageFiles(selectedCase.getName(), docs);
             }
-            
-            toDownload = caseFileService.getNativeFiles(selectedCase.getName(), docPaths);
-            
-        } else if ("exportImageAll".equals(action)) {
-            String query = solrSession.buildSearchQuery();
-            int rows = solrSession.getTotalDocuments();
-            
-            List<String> docPaths = new ArrayList<String>();
-            
-            List<SolrDocument> docs = getDocumentPaths(query, 0, rows);
-            for (SolrDocument solrDocument : docs) {
-                docPaths.add(solrDocument.getDocumentPath());
-            }
-            
-            toDownload = caseFileService.getImageFiles(selectedCase.getName(), docPaths);
+        } catch (Exception e) {
+            log.error("Problem sending cotent", e);
+            valueStack.put("error", true);
         }
         
         if (toDownload != null) {
@@ -151,7 +159,7 @@ public class CaseFileDownloadController extends SecureController {
     }
 
     private List<SolrDocument> getDocumentPaths(String query, int from, int rows) {
-        SolrResult solrResult = searchService.search(query, from, rows, null, false, "id,document_original_path");
+        SolrResult solrResult = searchService.search(query, from, rows, null, false, "id,document_original_path,unique_id");
         List<SolrDocument> result = new ArrayList<SolrDocument>(solrResult.getTotalSize());
         result.addAll(solrResult.getDocuments().values());
         return result;

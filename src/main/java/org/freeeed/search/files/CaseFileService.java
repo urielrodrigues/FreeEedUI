@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.freeeed.search.web.model.solr.SolrDocument;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -86,9 +88,11 @@ public class CaseFileService {
         }
     }
     
-    public File getNativeFile(String caseName, String documentOriginalPath) {
+    public File getNativeFile(String caseName, String documentOriginalPath, String uniqueId) {
         String fileName = documentOriginalPath.contains(File.separator) ?
                 documentOriginalPath.substring(documentOriginalPath.lastIndexOf(File.separator) + 1) : documentOriginalPath;
+        
+        fileName = uniqueId + "_" + fileName;        
                 
         File dir = new File(FILES_DIR + File.separator + caseName + File.separator + "native");
         if (dir.exists()) {
@@ -103,10 +107,38 @@ public class CaseFileService {
         return null;
     }
     
-    public File getHtmlFile(String caseName, String documentOriginalPath) {
+    public File getNativeFileFromSource(String location, String source, String documentOriginalPath) throws IOException {
+        String fileName = source + File.separator + documentOriginalPath;
+        File f = new File(fileName);
+        if (f.exists()) {
+            File newFile = new File(location + File.separator + documentOriginalPath);
+            FileUtils.copyFile(f, newFile);
+            return newFile;
+        } else {
+            int extIndex = documentOriginalPath.lastIndexOf(".");
+            if (extIndex != -1) {
+                String ext = documentOriginalPath.substring(documentOriginalPath.lastIndexOf(".") + 1);
+                if ("eml".equalsIgnoreCase(ext)) {
+                    fileName = source + File.separator + documentOriginalPath.substring(0, extIndex);
+                    f = new File(fileName);
+                    if (f.exists()) {
+                        File newFile = new File(location + File.separator + documentOriginalPath);
+                        FileUtils.copyFile(f, newFile);
+                        return newFile;
+                    }
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    public File getHtmlFile(String caseName, String documentOriginalPath, String uniqueId) {
         String fileName = documentOriginalPath.contains(File.separator) ?
                 documentOriginalPath.substring(documentOriginalPath.lastIndexOf(File.separator) + 1) : documentOriginalPath;
         
+        fileName = uniqueId + "_" + fileName;
+                
         File dir = new File(FILES_DIR + File.separator + caseName + File.separator + "html");
         if (dir.exists()) {
             File[] files = dir.listFiles();
@@ -125,10 +157,12 @@ public class CaseFileService {
         return file;
     }
     
-    public File getImageFile(String caseName, String documentOriginalPath) {
+    public File getImageFile(String caseName, String documentOriginalPath, String uniqueId) {
         String fileName = documentOriginalPath.contains(File.separator) ?
                 documentOriginalPath.substring(documentOriginalPath.lastIndexOf(File.separator) + 1) : documentOriginalPath;
         
+        fileName = uniqueId + "_" + fileName;        
+                
         File dir = new File(FILES_DIR + File.separator + caseName + File.separator + "pdf");
         if (dir.exists()) {
             File[] files = dir.listFiles();
@@ -142,10 +176,10 @@ public class CaseFileService {
         return null;
     }
     
-    public File getImageFiles(String caseName, List<String> originalFiles) {
+    public File getImageFiles(String caseName, List<SolrDocument> docs) {
         List<File> imageFiles = new ArrayList<File>();
-        for (String documentOriginalPath : originalFiles) {
-            File file = getImageFile(caseName, documentOriginalPath);
+        for (SolrDocument doc : docs) {
+            File file = getImageFile(caseName, doc.getDocumentPath(), doc.getUniqueId());
             if (file != null) {
                 imageFiles.add(file);
             }
@@ -166,10 +200,10 @@ public class CaseFileService {
         return res;
     }
     
-    public File getNativeFiles(String caseName, List<String> originalFiles) {
+    public File getNativeFiles(String caseName, List<SolrDocument> docs) {
         List<File> imageFiles = new ArrayList<File>();
-        for (String documentOriginalPath : originalFiles) {
-            File file = getNativeFile(caseName, documentOriginalPath);
+        for (SolrDocument doc : docs) {
+            File file = getNativeFile(caseName, doc.getDocumentPath(), doc.getUniqueId());
             if (file != null) {
                 imageFiles.add(file);
             }
@@ -181,6 +215,32 @@ public class CaseFileService {
         String zipFileName = FILES_TMP_DIR + File.separator + "nattmp" + System.currentTimeMillis() + ".zip"; 
         try {
             ZipUtil.createZipFile(zipFileName, imageFiles);
+        } catch (IOException e) {
+            log.error("Problem creating zip file", e);
+            return null;
+        }
+        
+        File res = new File(zipFileName);
+        return res;
+    }
+    
+    public File getNativeFilesFromSource(String source, List<SolrDocument> docs) throws IOException {
+        File tmpDir = new File(FILES_TMP_DIR);
+        tmpDir.mkdirs();
+        
+        long ts =  System.currentTimeMillis();
+        String zipFileName = FILES_TMP_DIR + File.separator + "nattmp" + ts + ".zip";
+        String zipFileDirName = FILES_TMP_DIR + File.separator + "nattmp" + ts;
+        File zipFileDir = new File(zipFileDirName);
+        
+        zipFileDir.mkdirs();
+        
+        for (SolrDocument doc : docs) {
+            getNativeFileFromSource(zipFileDirName, source, doc.getDocumentPath());
+        }
+
+        try {
+            ZipUtil.createZipFile(zipFileName, zipFileDirName);
         } catch (IOException e) {
             log.error("Problem creating zip file", e);
             return null;

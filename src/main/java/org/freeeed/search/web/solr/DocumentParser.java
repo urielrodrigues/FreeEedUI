@@ -51,6 +51,7 @@ public class DocumentParser {
         String subject = "";
         String date = "";
         String docPath = "";
+        String uniqueId = "";
         List<Tag> tags = new ArrayList<Tag>();
         
         Set<Map.Entry<String, List<String>>> entrySet = data.entrySet();
@@ -67,6 +68,10 @@ public class DocumentParser {
             
             if ("id".equalsIgnoreCase(name)) {
                 documentId = value;
+            }
+            
+            if ("unique_id".equalsIgnoreCase(name)) {
+                uniqueId = value;
             }
             
             if ("creator".equalsIgnoreCase(name)) {
@@ -124,6 +129,7 @@ public class DocumentParser {
         doc.setEntries(entries);
         doc.setTags(tags);
         doc.setDocumentPath(docPath);
+        doc.setUniqueId(uniqueId);
         
         return doc;
     }

@@ -36,7 +36,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @author ilazarov.
  *
  */
-public class CaseController extends SecureController {
+public class CaseController extends BaseController {
     private static final Logger log = Logger.getLogger(CaseController.class);
     
     private CaseDao caseDao;
@@ -45,7 +45,11 @@ public class CaseController extends SecureController {
 
     @Override
     public ModelAndView execute() {
-        if (!loggedSiteVisitor.getUser().hasRight(User.Right.CASES)) {
+        //case creation also remotely identified by a remoteCreation
+        String remoteCreation = (String) valueStack.get("removecasecreation");
+        
+        if ((remoteCreation == null || !remoteCreation.equals("yes")) 
+                && !loggedSiteVisitor.getUser().hasRight(User.Right.CASES)) {
             try {
                 response.sendRedirect(WebConstants.MAIN_PAGE_REDIRECT);
                 return new ModelAndView(WebConstants.CASE_PAGE);
