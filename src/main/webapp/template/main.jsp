@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions.tld" %>
 
 <div class="homepage_text">
     This is the home page of FreeEed Search application.
@@ -14,7 +14,7 @@
     Metadata, text, and the file itself are delivered as processed results.
     The current and future building blocks of the system are HDFS, Hadoop, HBase, 
     Tika, Lucene, Solr, Mahout, Hive,  and Pig.
-    SHMsoft™ provides a blog with current news and information on the happenings of the week.  You can see the SHMsoft blog 
+    SHMsoftï¿½ provides a blog with current news and information on the happenings of the week.  You can see the SHMsoft blog 
     <a href="http://shmsoft.blogspot.com/" target="_blank">here</a>
     <br/>
     You can also may visit <a href="http://www.freeeed.org" target="_blank">FreeEed main page</a>
