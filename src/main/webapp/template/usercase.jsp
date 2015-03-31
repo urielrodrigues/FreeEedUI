@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="shmwebfunc" uri="WEB-INF/tags/custom.tld"%>
+<%@ taglib prefix="shmwebfunc" uri="customtld"%>
 
 <script src="js/jquery-fu.js"></script>
 <script src="js/case.js"></script>
