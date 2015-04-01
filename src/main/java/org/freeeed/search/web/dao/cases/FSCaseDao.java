@@ -166,7 +166,7 @@ public class FSCaseDao implements CaseDao {
                 casesCache = data;
             }
         } catch (Exception e) {
-            log.error("Problem loading cases from file system!");
+            log.error("Problem loading cases from file system!", e);
         } finally {
             if (fis != null) {
                 try {

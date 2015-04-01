@@ -52,6 +52,7 @@
     <jsp-config>
         <taglib>
             <taglib-uri>customtld</taglib-uri>
+            <!-- this is redlined in IntelliJ, but putting WEB-INF in front ruins the run -->
             <taglib-location>tags/custom.tld</taglib-location>
         </taglib>
     </jsp-config>
