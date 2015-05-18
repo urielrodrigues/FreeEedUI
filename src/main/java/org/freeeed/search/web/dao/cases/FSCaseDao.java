@@ -41,7 +41,7 @@ import org.freeeed.search.web.model.Case;
  */
 public class FSCaseDao implements CaseDao {
     private static final String CASES_FILE = "work/c.dat";
-    private static final Logger log = Logger.getLogger(FSCaseDao.class);
+    private static final Logger logger = Logger.getLogger(FSCaseDao.class);
     
     private Map<Long, Case> casesCache;
     private ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
@@ -51,7 +51,7 @@ public class FSCaseDao implements CaseDao {
         lock.writeLock().lock();
         
         try {
-            log.info("Init FS Cases DAO...");
+            logger.info("Init FS Cases DAO...");
             casesCache = new HashMap<Long, Case>();
             
             loadCases();
@@ -133,13 +133,13 @@ public class FSCaseDao implements CaseDao {
             oos.close();
             fos.close();
         } catch (Exception e) {
-            log.error("Problem storing cases from file system!", e);
+            logger.error("Problem storing cases from file system!", e);
         } finally {
             if (fos != null) {
                 try {
                     fos.close();
                 } catch (IOException e) {
-                    log.error("Problem closing", e);
+                    logger.error("Problem closing", e);
                 }
             }
             
@@ -147,7 +147,7 @@ public class FSCaseDao implements CaseDao {
                 try {
                     oos.close();
                 } catch (IOException e) {
-                    log.error("Problem closing", e);
+                    logger.error("Problem closing", e);
                 }
             }
         }
@@ -156,6 +156,7 @@ public class FSCaseDao implements CaseDao {
     private void loadCases() {
         FileInputStream fis = null;
         ObjectInputStream ois = null;
+        logger.info("Preparing to open the file " + new File(CASES_FILE).getAbsolutePath());
         try {
             fis = new FileInputStream(CASES_FILE);
             ois = new ObjectInputStream(fis);
@@ -166,13 +167,13 @@ public class FSCaseDao implements CaseDao {
                 casesCache = data;
             }
         } catch (Exception e) {
-            log.error("Problem loading cases from file system!", e);
+            logger.error("Problem loading cases from file system!", e);
         } finally {
             if (fis != null) {
                 try {
                     fis.close();
                 } catch (IOException e) {
-                    log.error("Problem closing", e);
+                    logger.error("Problem closing", e);
                 }
             }
             
@@ -180,7 +181,7 @@ public class FSCaseDao implements CaseDao {
                 try {
                     ois.close();
                 } catch (IOException e) {
-                    log.error("Problem closing", e);
+                    logger.error("Problem closing", e);
                 }
             }
         }
