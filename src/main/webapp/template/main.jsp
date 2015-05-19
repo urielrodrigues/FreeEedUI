@@ -1,5 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<<<<<<< HEAD
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+=======
+>>>>>>> 31d3d8647cf298bb2fde0c90fd8302d6a7f760df
 
 <div class="homepage_text">
     This is the home page of FreeEed Search application.
