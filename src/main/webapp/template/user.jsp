@@ -1,10 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<<<<<<< HEAD
 <%@ taglib prefix="shmwebfunc" uri="http://freeeed.org/tags/custom"%>
-=======
-<%@ taglib prefix="shmwebfunc" uri="customtld"%>
->>>>>>> 31d3d8647cf298bb2fde0c90fd8302d6a7f760df
 
 <div class="reg-proj-head">
     Administrate user 

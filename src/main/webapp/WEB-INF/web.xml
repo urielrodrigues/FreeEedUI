@@ -49,13 +49,6 @@
         <url-pattern>*.html</url-pattern>
     </servlet-mapping>
 
-    <jsp-config>
-        <taglib>
-            <taglib-uri>customtld</taglib-uri>
-            <taglib-location>tags/custom.tld</taglib-location>
-        </taglib>
-    </jsp-config>
-
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
